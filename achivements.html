@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Achievements</title>
+        <style>
+            html,
+            body{
+                height: 100%;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 10px;
+            }
+
+            body{
+                margin: 0;
+                padding: 1%;
+            }
+
+            .window{
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.9);
+                border-top-left-radius: 0.5rem;
+                border-top-right-radius: 0.5rem;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0.8rem 1rem 1rem rgba(0, 0, 0, 0.7);
+            }
+
+            .window .window__header{
+                padding: 1%;
+                background-image: linear-gradient(to top, #09203f 0%, #537895 100%);
+                box-shadow: inset 0 0.2rem 0.2rem rgba(255, 255, 255, 0.4) , 0 0.1rem 0.2rem rgba(0, 0, 0, 0.6);
+                letter-spacing: 0.2rem;
+                font-weight: bold;
+                font-size: 1.4rem;
+                color: #fff;
+                text-transform: uppercase;
+            }
+
+            .window .window__content{
+                height: 100%;
+                box-sizing: border-box;
+                overflow-y: scroll;
+            }
+
+            .achievement{
+                background-color: #000;
+                position: relative;
+            }
+
+            .achievement--disabled{
+                opacity: 0.2;
+            }
+
+            .achievement .achievement__view{
+                background: linear-gradient(to top, rgba(31, 28, 44, 0.7), rgba(146, 142, 171, 0.7));
+                padding: 0.5rem;
+                height: 11rem;
+                display: flex;
+            }
+
+            .achievement .achievement__view:hover{
+                background: linear-gradient(to top, rgba(51, 48, 64, 0.7), rgba(166, 162, 191, 0.7));
+            }
+
+            .achievement .achievement__view .achievement__image{
+                width: 10rem;
+                height: 10em;
+                margin-right: 0.5rem;
+            }
+
+            .achievement .achievement__description{
+                padding: 1rem 15rem;
+                font-size: 3rem;
+                font-style: italic;
+                line-height: 4rem;
+                text-align: justify;
+                color: #999;
+                letter-spacing: 0.3rem;
+                display: none;
+                box-sizing: border-box;
+            }
+
+            .achievement .achievement__view .achievement__name,
+            .achievement .achievement__view .achievement__task
+            {
+                width: 50%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                box-sizing: border-box;
+                padding: 0.5rem;
+            }
+
+            .achievement .achievement__checkbox{
+                position: absolute;
+                z-index: 99;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                width: 100%;
+                height: 100%;
+                box-sizing: border-box;
+                border: none;
+                margin: 0;
+            }
+
+            .achievement .achievement__checkbox:checked + .achievement__description{
+                display: block;
+            }
+
+            .task__name,
+            .task__progress{
+                height: 50%;
+                display: flex;
+                align-items: center;
+            }
+
+            .task__name{
+                font-size: 2rem;
+                font-weight: bold;
+                color: #aaa;
+            }
+
+            .task__progress{
+                font-size: 2rem;
+                width: 100%;
+                justify-content: center;
+                color: #fff;
+                background: linear-gradient(to bottom, rgba(100, 0, 0, 0.5), rgba(255,76,60, 0.5));
+                box-sizing: border-box;
+                border: 0.3rem solid #000;
+                position: relative;
+            }
+
+            .task__progress-label{
+                position: absolute;
+            }
+
+            .task__progress-track{
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                z-index: 0;
+                background: linear-gradient(to bottom, rgba(0, 100, 0, 0.5), rgba(76,255,60, 0.5));
+            }
+
+            .achievement .achievement__view .achievement__name{
+                font-size: 4rem;
+                font-weight: bold;
+                color: #fff;
+            }
+
+            .container{
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="window">
+            <div class="window__header">
+                Achievements
+            </div>
+            <div class="window__content js-content">
+                <template class="js-achievement-tpl">
+                    <div class="achievement">
+                        <div class="achievement__view">
+                            <img src="http://srmslcbe.com/images/achivements.png" alt="" class="achievement__image">
+                            <div class="container">
+                                <div class="achievement__name">
+                                    Achievement Name
+                                </div>
+                                <div class="achievement__task task">
+                                    <div class="task__name">Kill 3 enemies</div>
+                                    <div class="task__progress">
+                                        <div class="task__progress-track" style="width: 55%;"></div>
+                                        <span class="task__progress-label">45%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="checkbox" class="achievement__checkbox">
+                        <div class="achievement__description">
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi itaque sunt ut, voluptates veniam ratione ab dolorem provident voluptatem a non dignissimos nemo! Blanditiis nobis provident fugit doloremque porro obcaecati?
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <script>
+            function achievements(data){
+                var container = document.querySelector(".js-content");
+                var tpl = container.querySelector(".js-achievement-tpl");
+
+                //console.log(tpl);
+
+                data.forEach(item => {
+                    var progress = (parseInt(item.currentProgress) / parseInt(item.maxProgress) * 100).toFixed(0);
+
+                    tpl.content.querySelector(".achievement__name").innerHTML = item.name;
+                    tpl.content.querySelector(".task__name").innerHTML = item.taskName;
+                    tpl.content.querySelector(".achievement__description").innerHTML = item.description;
+                    tpl.content.querySelector(".task__progress-label").innerHTML = progress + "%";
+                    tpl.content.querySelector(".task__progress-track").style.width = progress + "%";
+                    tpl.content.querySelector(".achievement__image").setAttribute("src", item.img);
+                    
+                    if(item.isUnlocked){
+                        tpl.content.querySelector(".achievement").classList.remove("achievement--disabled");
+                    } else{
+                        tpl.content.querySelector(".achievement").classList.add("achievement--disabled");
+                    }
+
+                    if(item.isActive){
+                        tpl.content.querySelector(".achievement").classList.add("achievement--active");
+                    } else{
+                        tpl.content.querySelector(".achievement").classList.remove("achievement--active");
+                    }
+
+                    var clone = document.importNode(tpl.content, true);
+
+                    container.appendChild(clone);
+                });
+            }
+
+            // test data
+            var data = [
+                {
+                    name: "Achivement 1",
+                    taskName: "Task 1",
+                    description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi itaque sunt ut, voluptates veniam ratione ab dolorem provident voluptatem a non dignissimos nemo! Blanditiis nobis provident fugit doloremque porro obcaecati?",
+                    currentProgress: 87,
+                    maxProgress: 100,
+                    isUnlocked: true,
+                    isActive: true,
+                    img: "https://ahmadataka.files.wordpress.com/2014/01/achievement.gif"
+                },
+                {
+                    name: "Achivement 2",
+                    taskName: "Task 2",
+                    description: "Lorem ipsum dolor sit amet consec atione ab dolorem provident voluptatem a non dignissimos nemo! Blanditiis nobis provident fugit doloremque porro obcaecati?",
+                    currentProgress: 34,
+                    maxProgress: 100,
+                    isUnlocked: true,
+                    isActive: true,
+                    img: "https://vignette.wikia.nocookie.net/boombeach/images/2/25/Achievements3.png/revision/latest?cb=20140731193245"
+                },
+                {
+                    name: "Achivement 3",
+                    taskName: "Task 3",
+                    description: "Lorem ipsum dolor sit amet consectetur, adipisicin ident voluptatem a non dignissimos nemo! Blanditiis nobis provident fugit doloremque porro obcaecati?",
+                    currentProgress: 0,
+                    maxProgress: 100,
+                    isUnlocked: false,
+                    isActive: true,
+                    img: "https://vignette.wikia.nocookie.net/smitegame/images/f/f6/Achievement_Combat_Sol_Disapparate.png/revision/latest?cb=20160211150110&path-prefix=ru"
+                },
+                {
+                    name: "Achivement 4",
+                    taskName: "Task 4",
+                    description: "Lorem ipsum dolor sit amet consect! Blanditiis nobis provident fugit doloremque porro obcaecati?",
+                    currentProgress: 0,
+                    maxProgress: 100,
+                    isUnlocked: false,
+                    isActive: true,
+                    img: "https://upload.wikimedia.org/wikipedia/commons/4/4b/National_Intelligence_Exceptional_Achievement_Medal.png"
+                },
+                {
+                    name: "Achivement 5",
+                    taskName: "Task 5",
+                    description: " sunt ut, voluptates veniam ratione ab dolorem provident voluptatem a non dignissimos nemo! Blanditiis nobis provident fugit doloremque porro obcaecati?",
+                    currentProgress: 0,
+                    maxProgress: 100,
+                    isUnlocked: false,
+                    isActive: true,
+                    img: "https://ahmadataka.files.wordpress.com/2014/01/achievement.gif"
+                },
+                {
+                    name: "Achivement 6",
+                    taskName: "Task 6",
+                    description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi itaque sunt ut, voluptates veniam ratione ab dolorem provident voluptatem a non dignissimos nemo! Blanditiis nobis provident fugit doloremque porro obcaecati?",
+                    currentProgress: 0,
+                    maxProgress: 100,
+                    isUnlocked: false,
+                    isActive: true,
+                    img: "https://ahmadataka.files.wordpress.com/2014/01/achievement.gif"
+                },
+            ];
+
+            achievements(data);
+        </script>
+    </body>
+</html>
